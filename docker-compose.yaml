@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  aml:
+    image: aml-project:latest
+    build: .
+    volumes:
+      - "./data:/aml/data"
+      # - "./data_preprocessing:/aml/data_preprocessing"
+      - "./notebooks:/aml/notebooks"
+      - "./src:/aml/src"
+      - ".:/aml"
+    command: sleep infinity
