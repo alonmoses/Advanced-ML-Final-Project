@@ -1,0 +1,15 @@
+{
+    "logistic_regression": {
+        
+        "plot_res": "True",
+        "hyperparameters": {
+        "early_stop_after": 4,
+        "learning_rate": 1.5e-06,
+        "batch_size": 20,
+        "epochs": 100,
+        "rho": 0.4
+        },
+        "train_data": "data/dreaddit/dreaddit-train.csv",
+        "test_data": "data/dreaddit/dreaddit-test.csv"
+    }
+}
