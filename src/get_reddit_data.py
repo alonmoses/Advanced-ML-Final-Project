@@ -6,7 +6,7 @@ from gensim.models import Word2Vec
 
 r = praw.Reddit(client_id="27WEcCXx6eUBFWTjd0AXBg",
                 client_secret="NJUZ56HGxvyiTdsf0Xxu9L0e8Yz46w",
-                password="",
+                password="^Iuktxzun2652",
                 user_agent="USERAGENT",
                 username="Disastrous_Egg6551 ")
 
@@ -21,7 +21,7 @@ texts = []
 for subreddit in subreddit_list:
     results = list(api.search_submissions(before=end_epoch, after=start_epoch,
                                           subreddit=subreddit,
-                                          filter=['url','author', 'title', 'subreddit'], limit=10000))
+                                          filter=['url','author', 'title', 'subreddit']))
     
     print(f"Done downloading reddit posts from subreddit: '{subreddit}'")
     for result in results:
@@ -29,10 +29,8 @@ for subreddit in subreddit_list:
 
 wv_model = Word2Vec(sentences=texts, vector_size=300, window=5, min_count=1, workers=4)
 wv_model.build_vocab(texts, progress_per=10000)
-wv_model.train(texts, total_examples=wv_model.corpus_count, epochs=30, report_delay=1)
+wv_model.train(texts, total_examples=wv_model.corpus_count, epochs=50, report_delay=1)
 wv_model.save("word2vec.model")
 
-# with open('reddit_texts.txt', 'w') as f:
-#     for text in texts:
-#         f.write(text+'\n')
+
 

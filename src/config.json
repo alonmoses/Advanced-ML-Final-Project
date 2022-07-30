@@ -4,9 +4,8 @@
         "plot_res": "True",
         "hyperparameters": {
         "early_stop_after": 4,
-        "learning_rate": 1.5e-06,
-        "batch_size": 20,
-        "epochs": 100,
+        "batch_size": 500,
+        "epochs": 1000,
         "rho": 0.4
         },
         "train_data": "data/dreaddit/dreaddit-train.csv",

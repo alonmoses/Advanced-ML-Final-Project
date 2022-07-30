@@ -21,8 +21,10 @@ class ProcessData:
         train_df = pd.read_csv(self.train_data)
         test_df = pd.read_csv(self.test_data)
 
-        self.generate_embeddings(train_df)
-        
+        # generate embeddings for each sentence
+        train_df = self.generate_embeddings(train_df)
+        test_df = self.generate_embeddings(test_df)
+
         # drop columns based on filter_features() logic
         columns_to_keep = self.filter_features(train_df) + ['Embeddings']
         train_df = train_df[train_df['confidence'] > 0.8]
@@ -37,22 +39,36 @@ class ProcessData:
         return features_to_keep
 
     def generate_embeddings(self, df):
-        df['Embeddings'] = ""
+        embeddings_mean = pd.DataFrame()
+        rows_to_drop = []
         for i, row in df.iterrows():
             sentence_relevant_embeddings = [word for word in row['text'].split() if word in self.word2vec_model.wv.key_to_index]
-            embeddings_mean = np.mean(self.word2vec_model.wv[sentence_relevant_embeddings], axis=0)
-            df.iloc[i]['Embeddings'] = embeddings_mean
+            if sentence_relevant_embeddings:
+                embeddings_mean = embeddings_mean.append({'Embeddings': np.mean(self.word2vec_model.wv[sentence_relevant_embeddings], axis=0)}, ignore_index=True)
+            else:
+                rows_to_drop.append(i)
+        df = df.drop(index=rows_to_drop, axis=0)
+        df = pd.merge(df, embeddings_mean, left_index=True, right_index=True)
+        return df
+
+    def generate_train_features(self, df):
+        features_arr = []
+        for idx, row in df.iterrows():
+            features = row[:-1].to_numpy()
+            data = np.concatenate((features, row[-1]))
+            features_arr.append(data.astype(np.float32))
+        return torch.tensor(features_arr)
 
     def create_dataloaders(self):
         train_df, test_df = self.load_data_to_dataframe()
 
         # create datasets
-        train_features = torch.tensor(train_df.drop(columns=['label']).values)
+        train_features = self.generate_train_features(train_df.drop(columns=['label']))
         train_labels = torch.tensor(train_df['label'].values)
         train = TensorDataset(train_features, train_labels)
         self.train_dl = DataLoader(train, batch_size=self.config['hyperparameters']['batch_size'], shuffle=True)
 
-        test_features = torch.tensor(test_df.drop(columns=['label']).values)
+        test_features = self.generate_train_features(test_df.drop(columns=['label']))
         test_labels = torch.tensor(test_df['label'].values)
         test = TensorDataset(test_features, test_labels)
         self.test_dl = DataLoader(test, batch_size=self.config['hyperparameters']['batch_size'], shuffle=True)  
@@ -62,8 +78,8 @@ def main(kwargs, config):
     word2vec_model = kwargs['word2vec']
     dataset = ProcessData(model, word2vec_model, config)
     dataset.create_dataloaders()
-    lr_executer = LogisticRegressionExecute(config[model])
-    lr_executer.fit(dataset.train_dl)
+    lr_executer = LogisticRegressionExecute(config[model], dataset.train_dl, dataset.test_dl)
+    lr_executer.fit()
 
 
 if __name__ == '__main__':
