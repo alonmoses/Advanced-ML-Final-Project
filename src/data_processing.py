@@ -4,10 +4,7 @@ import json
 from argparse import ArgumentParser
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-
 from gensim.models import Word2Vec
-
-from models import LogisticRegressionExecute
 
 class ProcessData:
     def __init__(self, model, word2vec_model, config):
@@ -72,24 +69,3 @@ class ProcessData:
         test_labels = torch.tensor(test_df['label'].values)
         test = TensorDataset(test_features, test_labels)
         self.test_dl = DataLoader(test, batch_size=self.config['hyperparameters']['batch_size'], shuffle=True)  
-
-def main(kwargs, config):
-    model = kwargs['model']
-    word2vec_model = kwargs['word2vec']
-    dataset = ProcessData(model, word2vec_model, config)
-    dataset.create_dataloaders()
-    lr_executer = LogisticRegressionExecute(config[model], dataset.train_dl, dataset.test_dl)
-    lr_executer.fit()
-
-
-if __name__ == '__main__':
-    parser = ArgumentParser()
-    parser.add_argument('-m', '--model', help='Choose the model to train', required=False, choices=['logistic_regression'], default='logistic_regression')
-    parser.add_argument('-wm', '--word2vec', help='Choose the model to train', required=False, choices=['word2vec'], default='word2vec')
-    args = parser.parse_args()
-    kwargs = vars(args)
-
-    with open('src/config.json', 'r') as f:
-        config = json.load(f)
-
-    main(kwargs, config)

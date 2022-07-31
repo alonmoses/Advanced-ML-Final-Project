@@ -8,7 +8,6 @@ def plot_array_values_against_length(arr: list, title: str=''):
     ax.set_title(title)
     ax.plot(arr[0]) # train
     ax.plot(arr[1]) # test
-    # ax.plot(arr[2]) # test
     fig.savefig(f"plots/{title}.png")
     plt.show()
 

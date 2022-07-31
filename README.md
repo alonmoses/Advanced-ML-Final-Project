@@ -1,12 +1,18 @@
 # Advanced-ML-Final-Project
 Development Repository for Advanced Machine Learning Final Project-
-Dreaddit, a new text corpus of lengthy multi-domain social media data for the identification of stress.
+`Dreaddit: A Reddit Dataset for Stress Analysis in Social Media`
 
 ## Environment
 - Use docker to create the requested environment
 `docker-compose up -d`
-- Develop and run scripts inside the container
+- In order to execute the model run under the root directory:
+`python src/execute_flow.py`
+
+* The `src/config.json` file lists the hyperparameters used during training and evaluation of the model, change them to get different results.
 
 ## Data
-- Move the Dreadit dataset under data/
-- Read the data to csv - **python src/data_processing.py**
+- Make the Dreadit dataset is located under `data/` directory
+
+## Results-
+- The flow prints to the terminal the loss, accuracy, and F1 score for each epoch.
+- At the end of the execution `plots/` directory will include 3 plots of the loss, accuracy, and F1 progress with respect to the epoch number.

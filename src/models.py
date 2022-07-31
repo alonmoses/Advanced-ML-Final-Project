@@ -22,7 +22,7 @@ class LogisticRegressionExecute:
     def __init__(self, config:dict, train_dl, test_dl, model:nn.Module=LogisticRegression):
         self.model = model(input_dim=303, output_dim=2) #TODO: fix to set from outside based on actual number of features
         self.epochs = config['hyperparameters']['epochs']
-        self.optimizer = Adam(filter(lambda p: p.requires_grad, self.model.parameters()))
+        self.optimizer = Adam(filter(lambda p: p.requires_grad, self.model.parameters()), lr=config['hyperparameters']['lr'])
         self.criterion = torch.nn.CrossEntropyLoss(weight=self.get_class_weights(train_dl, test_dl))
         self.train_dl= train_dl
         self.test_dl = test_dl
@@ -70,13 +70,13 @@ class LogisticRegressionExecute:
             total_labels += list(labels.float().cpu().numpy())
 
         accuracy = total_correct / len(total_preds)
+        total_loss = train_loss / len(total_preds)
         F1_global = metrics.f1_score(total_labels, total_preds).item()
-        print(f"loss: {train_loss}, accuracy:{accuracy}, F1:{F1_global}")
-        return train_loss, accuracy, F1_global
+        print(f"loss: {total_loss}, accuracy:{accuracy}, F1:{F1_global}")
+        return total_loss, accuracy, F1_global
             
     def validate(self, dl):
         self.model.eval()
-        self.optimizer.zero_grad()
         test_loss = 0
         total_correct = 0
         total_labels = []
@@ -94,9 +94,10 @@ class LogisticRegressionExecute:
             total_labels += list(labels.float().cpu().numpy())
     
         accuracy = total_correct / len(total_preds)
+        total_loss = test_loss / len(total_preds)
         F1_global = metrics.f1_score(total_labels, total_preds).item()
-        print(f"loss: {test_loss}, accuracy:{accuracy}, F1:{F1_global}")
-        return test_loss, accuracy, F1_global
+        print(f"loss: {total_loss}, accuracy:{accuracy}, F1:{F1_global}")
+        return total_loss, accuracy, F1_global
 
     def get_class_weights(self, train_dl, test_dl, label_field_name: str='label', classes:int=2):
         arr = torch.zeros(classes)
