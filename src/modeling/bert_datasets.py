@@ -1,11 +1,14 @@
 import json
 import torchtext as tt
+import pandas as pd
 from typing import List, Tuple
 from pytorch_pretrained_bert import BertTokenizer
 from transformers import RobertaTokenizer, GPT2Tokenizer
 from torchtext.data import Example
 # from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import torch
+
+from preprocessing.add_features import add_ner_feature
 
 
 class BertDatasetsForDreaddit(tt.data.Dataset):
@@ -19,7 +22,7 @@ class BertDatasetsForDreaddit(tt.data.Dataset):
 
         df = pd.read_csv(path.join('data', 'dreaddit', f'{path}.csv'), nrows=max_examples)
         # Add vec features
-        df = add_vec_features(df)
+        df, _ = add_ner_feature(df)
 
         examples = []
         for _, example in df.iterrows():

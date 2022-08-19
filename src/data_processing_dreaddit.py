@@ -1,12 +1,10 @@
-from argparse import ArgumentParser
 from os import path
 import pandas as pd
-import numpy as np
-import json as js
+from sklearn.model_selection import train_test_split
 
 from preprocessing.add_features import add_boolean_features, add_counter_features
 
-NUM_EXAMPLES = 10 # None (use for full run)
+NUM_EXAMPLES = None # None (use for full run)
 
 
 def filter_features(df:pd.DataFrame, rho:float=0.4):
@@ -34,11 +32,14 @@ def prep_dreaddit_pipeline():
     train_df = train_df[columns_to_keep]
     test_df = test_df[columns_to_keep]
 
+    # Split train to train and dev
+    final_train_df, dev_df = train_test_split(train_df, test_size=0.1, random_state=42)
+
     # Save data to csv
-    train_df.to_csv(path.join(raw_data_path, 'train_df.csv'), index=False)
+    final_train_df.to_csv(path.join(raw_data_path, 'train_df.csv'), index=False)
+    dev_df.to_csv(path.join(raw_data_path, 'dev_df.csv'), index=False)
     test_df.to_csv(path.join(raw_data_path, 'test_df.csv'), index=False)
 
             
 if __name__ == '__main__':
-    # parse arguments
     prep_dreaddit_pipeline()

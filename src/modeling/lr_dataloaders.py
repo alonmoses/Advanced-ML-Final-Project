@@ -11,7 +11,7 @@ def add_vec_features(df):
     df = generate_embeddings(df)
 
     # generate NER vectors
-    df, ner_features_list = add_ner_feature(df)
+    df, _ = add_ner_feature(df)
 
     return df
 

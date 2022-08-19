@@ -19,7 +19,6 @@
             "request": "launch",
             "program": "src/data_processing_dreaddit.py",
             "console": "integratedTerminal",
-            "args": ["-wm", "word2vec"],
             "justMyCode": true
         }
     ]
