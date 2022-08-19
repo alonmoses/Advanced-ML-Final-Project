@@ -1,33 +1,25 @@
 import numpy as np
-from distutils.command.config import config
 from sklearn import metrics
 from sklearn.linear_model import LogisticRegression
-
 import torch
 import torch.nn as nn
-from torch.optim import Adam, SGD
-from torch.nn.modules.loss import _Loss
+from torch.optim import Adam
 from plot_results import plot_array_values_against_length
 
-class LogisticRegression(torch.nn.Module):
-     def __init__(self, input_dim, output_dim):
-         super(LogisticRegression, self).__init__()
-         self.linear = nn.Linear(input_dim, output_dim)
+from modeling.lr_dataloaders import create_dataloaders
 
-     def forward(self, x):
-         outputs = torch.sigmoid(self.linear(x))
-         return outputs
-
-class LogisticRegressionExecute:
-    def __init__(self, config:dict, train_dl, test_dl, model:nn.Module=LogisticRegression):
-        self.model = model(input_dim=303, output_dim=2) #TODO: fix to set from outside based on actual number of features
+class LRFramework:
+    def __init__(self, config:dict, model:nn.Module=LogisticRegression):
+        self.model = model(input_dim=config['hyperparameters']['input_dim'], output_dim=config['hyperparameters']['output_dim'])
         self.epochs = config['hyperparameters']['epochs']
         self.optimizer = Adam(filter(lambda p: p.requires_grad, self.model.parameters()), lr=config['hyperparameters']['lr'])
-        self.criterion = torch.nn.CrossEntropyLoss(weight=self.get_class_weights(train_dl, test_dl))
-        self.train_dl= train_dl
-        self.test_dl = test_dl
+        self.config = config
+        
+    def fit(self, raw_data_path):
+        self.train_dl, self.test_dl = create_dataloaders(config=self.config, raw_data_path=raw_data_path)
 
-    def fit(self):
+        self.criterion = torch.nn.CrossEntropyLoss(weight=self.get_class_weights(self.train_dl, self.test_dl))
+
         train_losses, train_accuracies, train_F1s = [], [], []
         test_losses, test_accuracies, test_F1s = [], [], []
 
@@ -99,7 +91,7 @@ class LogisticRegressionExecute:
         print(f"loss: {total_loss}, accuracy:{accuracy}, F1:{F1_global}")
         return total_loss, accuracy, F1_global
 
-    def get_class_weights(self, train_dl, test_dl, label_field_name: str='label', classes:int=2):
+    def get_class_weights(self, train_dl, test_dl, classes:int=2):
         arr = torch.zeros(classes)
         for _, labels in train_dl:
             for label in labels:
@@ -109,6 +101,3 @@ class LogisticRegressionExecute:
                 arr[label] += 1
         arrmax = arr.max().expand(classes)
         return arrmax / arr
-
-
-    

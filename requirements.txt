@@ -18,4 +18,5 @@ torchtext==0.4.0
 vaderSentiment
 praw
 psaw
-gensim
+transformers
+pytorch_transformers

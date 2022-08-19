@@ -1,5 +1,5 @@
 # Create the image base on the Miniconda3 image
-FROM python:3.9-slim
+FROM python:3.9
 
 # Creating the working directory in the container
 WORKDIR /aml

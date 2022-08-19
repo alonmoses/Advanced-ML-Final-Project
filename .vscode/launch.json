@@ -5,12 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Execute flow",
+            "name": "Run model",
             "type": "python",
             "request": "launch",
-            "program": "src/execute_flow.py",
+            "program": "src/run_model.py",
             "console": "integratedTerminal",
-            "args": ["-m", "logistic_regression", "-wm", "word2vec"],
+            "args": ["-m", "lr", "-d", "dreaddit"],
+            "justMyCode": true
+        },
+        {
+            "name": "Preprocess Dreaddit",
+            "type": "python",
+            "request": "launch",
+            "program": "src/data_processing_dreaddit.py",
+            "console": "integratedTerminal",
+            "args": ["-wm", "word2vec"],
             "justMyCode": true
         }
     ]

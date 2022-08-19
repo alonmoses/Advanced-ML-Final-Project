@@ -1,7 +1,7 @@
 import datetime as dt
+from tqdm import tqdm
 import praw
 from psaw import PushshiftAPI
-from gensim.test.utils import common_texts
 from gensim.models import Word2Vec
 
 r = praw.Reddit(client_id="27WEcCXx6eUBFWTjd0AXBg",
@@ -18,13 +18,13 @@ end_epoch = int(dt.datetime(2018, 11, 19).timestamp())
 
 subreddit_list = ['domesticviolence', 'anxiety', 'stress', 'almosthomeless', 'assistance', 'food_pantry', 'homeless', 'ptsd', 'relationships'] # NOTE: subreddit r/survivorsofabuse is private and not accesible 
 texts = []
-for subreddit in subreddit_list:
+for subreddit in tqdm(subreddit_list):
     results = list(api.search_submissions(before=end_epoch, after=start_epoch,
                                           subreddit=subreddit,
                                           filter=['url','author', 'title', 'subreddit']))
     
     print(f"Done downloading reddit posts from subreddit: '{subreddit}'")
-    for result in results:
+    for result in tqdm(results):
         texts.append(result.title.split(' '))
 
 wv_model = Word2Vec(sentences=texts, vector_size=300, window=5, min_count=1, workers=4)

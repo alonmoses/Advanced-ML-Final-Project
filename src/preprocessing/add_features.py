@@ -3,6 +3,25 @@ import preprocessor as twitter_preprocessor
 import spacy
 from spacy.symbols import ORTH
 from tqdm import tqdm
+import pandas as pd
+import numpy as np
+from gensim.models import Word2Vec
+
+
+def generate_embeddings(df):
+    word2vec_model = Word2Vec.load('word2vec.model')
+
+    embeddings_mean = pd.DataFrame()
+    rows_to_drop = []
+    for i, row in df.iterrows():
+        sentence_relevant_embeddings = [word for word in row['text'].split() if word in word2vec_model.wv.key_to_index]
+        if sentence_relevant_embeddings:
+            embeddings_mean = embeddings_mean.append({'Embeddings': np.mean(word2vec_model.wv[sentence_relevant_embeddings], axis=0)}, ignore_index=True)
+        else:
+            rows_to_drop.append(i)
+    df = df.drop(index=rows_to_drop, axis=0)
+    df = pd.merge(df, embeddings_mean, left_index=True, right_index=True)
+    return df
 
 
 def add_boolean_features(df):
@@ -25,7 +44,7 @@ def add_counter_features(df):
     neg_words_seq = '|'.join(['not', 'no', 'nobody', 'nothing', 'none', 'never', 'neither', 'nor', 'nowhere', 'hardly', 'scarcely',
                                 'barely', 'don', 'isn', 'wasn', 'shouldn', 'wouldn', 'couldn', 'doesn'])
     swear_words_list = []
-    with open('src/swearwords.txt', 'r') as f:
+    with open('src/preprocessing/swearwords.txt', 'r') as f:
         for line in f:
             swear_words_list.append(line.strip().lower())
     swear_words_seq = '|'.join(swear_words_list)
@@ -107,6 +126,6 @@ def add_ner_feature(df):
 
     df['NERvec'] = ner_vec_list
     df['spacy_processed_text'] = processed_vec_list
-    added_features.append['NERvec']
+    added_features.append('NERvec')
 
     return df, added_features
