@@ -6,16 +6,14 @@ from torch.utils.data import DataLoader, TensorDataset
 from preprocessing.add_features import generate_embeddings, add_ner_feature
 
 
-def add_vec_features(train_df, test_df):
+def add_vec_features(df):
     # generate embeddings for each sentence
-    train_df = generate_embeddings(train_df)
-    test_df = generate_embeddings(test_df)
+    df = generate_embeddings(df)
 
     # generate NER vectors
-    train_df, ner_features_list = add_ner_feature(train_df)
-    test_df, _ = add_ner_feature(test_df)
+    df, ner_features_list = add_ner_feature(df)
 
-    return train_df, test_df
+    return df
 
 
 def generate_train_features(df):
@@ -34,7 +32,8 @@ def create_dataloaders(config, raw_data_path):
     test_df = pd.read_csv(path.join(raw_data_path, 'test_df.csv'))
 
     # Add vec features
-    train_df, test_df = add_vec_features(train_df, test_df)
+    train_df = add_vec_features(train_df)
+    test_df = add_vec_features(test_df)
 
     # create datasets
     train_features = generate_train_features(train_df.drop(columns=['label']))

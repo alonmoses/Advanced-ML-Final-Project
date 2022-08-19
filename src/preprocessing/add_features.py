@@ -30,7 +30,7 @@ def add_boolean_features(df):
     # Add boolean features
     for col_name, re_ in [
         ('hasqmark', '\?'), ('hasemark', '!'), ('hashashtag', '#'), ('hasurl', 'urlurlurl|http'), 
-        ('haspic', 'picpicpic|pic\.twitter\.com|instagr\.am'), ('hasrumor', 'rumour|gossip')
+        ('haspic', 'picpicpic|pic\.twitter\.com|instagr\.am'), ('hasrumour', 'rumour|gossip')
     ]:
         df[col_name] = df['text'].str.contains(re_).astype(int)
         added_features.append(col_name)

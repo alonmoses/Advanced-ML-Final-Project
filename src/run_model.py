@@ -1,34 +1,40 @@
 import json
 from os import path
 from argparse import ArgumentParser
-from modeling.bert_framework import BERTFramework, RoBERTaFramework, GPT2Framework
+import modeling.bert_framework_for_dreaddit as bert_dreaddit_fw
+import modeling.bert_framework_for_stance as bert_stance_fw
 from modeling.lr_framework import LRFramework
 from modeling.models import *
 
-def main(model, raw_data_path):
+def main(model, dataset):
     # load configurations from config.json
     with open(path.join('src', 'config.json'), 'r') as f:
         config = json.load(f)
+
+    if dataset == 'dreaddit':
+        raw_data_path = path.join('data', 'dreaddit')
+    else:
+        raw_data_path = path.join('data', 'stance')
 
     if model == 'lr':
         fworkf = LRFramework
         modelf = LogisticRegression
         modelframework = fworkf(config['lr'], modelf)
     elif model == 'bert':
-        fworkf = BERTFramework
-        modelf = BertModelForStanceClassification
+        fworkf = bert_dreaddit_fw.BERTFramework if dataset == 'dreaddit' else bert_stance_fw.BERTFramework
+        modelf = BertModelClassification
         modelframework = fworkf(config['bert'], modelf)
     elif model == 'roberta':
-        fworkf = RoBERTaFramework
-        modelf = RoBertaModelForStanceClassification
+        fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
+        modelf = RoBertaModelClassification
         modelframework = fworkf(config['roberta'], modelf)
     elif model == 'roberta_with_features':
-        fworkf = RoBERTaFramework
-        modelf = RoBertaWFeaturesModelForStanceClassification
+        fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
+        modelf = RoBertaWFeaturesModelClassification
         modelframework = fworkf(config['roberta'], modelf, with_features=True)
     elif model == 'gpt2':
-        fworkf = GPT2Framework
-        modelf = GPT2ModelForStanceClassification
+        fworkf = bert_dreaddit_fw.GPT2Framework if dataset == 'dreaddit' else bert_stance_fw.GPT2Framework
+        modelf = GPT2ModelClassification
         modelframework = fworkf(config['gpt2'], modelf)
     
     modelframework.fit(raw_data_path=raw_data_path)
@@ -59,9 +65,4 @@ if __name__ == '__main__':
     model = kwargs['model']
     dataset = kwargs['dataset']
 
-    if dataset == 'dreaddit':
-        raw_data_path = path.join('data', 'dreaddit')
-    else:
-        raw_data_path = path.join('data', 'stance')
-
-    main(model, raw_data_path)
+    main(model, dataset)

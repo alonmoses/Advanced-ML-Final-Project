@@ -10,7 +10,7 @@ from torchtext.data import BucketIterator, Iterator
 from collections import Counter, defaultdict, Iterable
 from typing import Tuple, List
 
-from modeling.bert_dataloaders import BertDatasets
+from modeling.bert_datasets import BertDatasetsForStance
 from plot_results import plot_array_values_against_length
 
 MAX_EXAMPLES = 5  # Todo: Change into None for full run
@@ -47,14 +47,14 @@ class BERTFramework:
 
     def create_dataset_iterators(self):
         # Create DataSets
-        fields = BertDatasets.prepare_fields_for_text(with_features=self.with_features)
-        train_data = BertDatasets(self.config["train_data"], fields, self.tokenizer,
+        fields = BertDatasetsForStance.prepare_fields_for_text(with_features=self.with_features)
+        train_data = BertDatasetsForStance(self.config["train_data"], fields, self.tokenizer,
                                                         max_length=self.config["hyperparameters"]["max_length"],
                                                         max_examples=MAX_EXAMPLES, with_features=self.with_features)
-        dev_data = BertDatasets(self.config["dev_data"], fields, self.tokenizer,
+        dev_data = BertDatasetsForStance(self.config["dev_data"], fields, self.tokenizer,
                                                       max_length=self.config["hyperparameters"]["max_length"],
                                                         max_examples=MAX_EXAMPLES, with_features=self.with_features) 
-        test_data = BertDatasets(self.config["test_data"], fields, self.tokenizer,
+        test_data = BertDatasetsForStance(self.config["test_data"], fields, self.tokenizer,
                                                        max_length=self.config["hyperparameters"]["max_length"],
                                                         max_examples=MAX_EXAMPLES, with_features=self.with_features) 
 
