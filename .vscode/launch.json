@@ -5,11 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
+            "name": "Execute flow",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "src/execute_flow.py",
             "console": "integratedTerminal",
+            "args": ["-m", "logistic_regression", "-wm", "word2vec"],
             "justMyCode": true
         }
     ]

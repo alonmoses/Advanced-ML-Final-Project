@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from data_processing import ProcessData
 from models import LogisticRegressionExecute
 
+USE_SAVED = False
 
 def main(kwargs, config):
     # get arhuments
@@ -11,7 +12,7 @@ def main(kwargs, config):
 
     # process the imput data and create dataloaders
     dataset = ProcessData(model, word2vec_model, config)
-    dataset.create_dataloaders()
+    dataset.create_dataloaders(use_saved=USE_SAVED)
 
     # execute logistic regression model
     lr_executer = LogisticRegressionExecute(config[model], dataset.train_dl, dataset.test_dl)

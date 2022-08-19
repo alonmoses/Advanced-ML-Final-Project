@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-import json
-from argparse import ArgumentParser
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from gensim.models import Word2Vec
+from add_features import add_boolean_features, add_counter_features, add_ner_feature
 
 class ProcessData:
     def __init__(self, model, word2vec_model, config):
@@ -13,20 +12,38 @@ class ProcessData:
         self.word2vec_model = Word2Vec.load(f'{word2vec_model}.model')
         self.config = config[model]
 
-    def load_data_to_dataframe(self):
-        # load csv to dataframe
-        train_df = pd.read_csv(self.train_data)
-        test_df = pd.read_csv(self.test_data)
+    def load_data_to_dataframe(self, use_saved=False):
+        if use_saved:
+            train_df = pd.read_csv('train_df.csv')
+            test_df = pd.read_csv('test_df.csv')
+        else:
+            # keep_cols = ['id','subreddit','post_id','sentence_range','text','label','confidence','social_timestamp']
+            keep_cols = None
+            # load csv to dataframe
+            train_df = pd.read_csv(self.train_data, usecols=keep_cols, nrows=100)
+            test_df = pd.read_csv(self.test_data, usecols=keep_cols, nrows=100)
 
-        # generate embeddings for each sentence
-        train_df = self.generate_embeddings(train_df)
-        test_df = self.generate_embeddings(test_df)
+            # generate embeddings for each sentence
+            train_df = self.generate_embeddings(train_df)
+            test_df = self.generate_embeddings(test_df)
 
-        # drop columns based on filter_features() logic
-        columns_to_keep = self.filter_features(train_df) + ['Embeddings']
-        train_df = train_df[train_df['confidence'] > 0.8]
-        train_df = train_df[columns_to_keep]
-        test_df = test_df[columns_to_keep]
+            # Add features
+            train_df, bool_features_list = add_boolean_features(train_df)
+            test_df, _ = add_boolean_features(test_df)
+            train_df, count_features_list = add_counter_features(train_df)
+            test_df, _ = add_counter_features(test_df)
+            train_df, ner_features_list = add_ner_feature(train_df)
+            test_df, _ = add_ner_feature(test_df)
+
+            # drop columns based on filter_features() logic
+            columns_to_keep = self.filter_features(train_df) + ['Embeddings'] + bool_features_list + count_features_list + ner_features_list
+            train_df = train_df[train_df['confidence'] > 0.8]
+            train_df = train_df[columns_to_keep]
+            test_df = test_df[columns_to_keep]
+
+            # Save data to csv
+            train_df.to_csv('train_df.csv', index=False)
+            test_df.to_csv('test_df.csv', index=False)
 
         return train_df, test_df
 
@@ -56,8 +73,8 @@ class ProcessData:
             features_arr.append(data.astype(np.float32))
         return torch.tensor(features_arr)
 
-    def create_dataloaders(self):
-        train_df, test_df = self.load_data_to_dataframe()
+    def create_dataloaders(self, use_saved=False):
+        train_df, test_df = self.load_data_to_dataframe(use_saved=use_saved)
 
         # create datasets
         train_features = self.generate_train_features(train_df.drop(columns=['label']))
