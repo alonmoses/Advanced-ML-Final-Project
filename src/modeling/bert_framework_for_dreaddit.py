@@ -286,8 +286,8 @@ class GPT2Framework(BERTFramework):
         self.init_tokenizer()
 
     def init_tokenizer(self):
-        model_config = GPT2Config.from_pretrained(pretrained_model_name_or_path='gpt2', num_labels=4)
-        self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2', classes=2)
+        model_config = GPT2Config.from_pretrained(pretrained_model_name_or_path='gpt2', num_labels=2)
+        self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
         # default to left padding
         self.tokenizer.padding_side = "left"
         # Define PAD Token = EOS Token = 50256
