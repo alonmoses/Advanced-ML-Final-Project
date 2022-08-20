@@ -4,7 +4,7 @@
 /.BERTcache
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
+*__pycache__/
 *.py[cod]
 *$py.class
 
@@ -13,6 +13,7 @@ __pycache__/
 
 # npy
 *.npy
+word2vec.model
 
 # Distribution / packaging
 .Python
