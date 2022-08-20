@@ -6,7 +6,7 @@ from gensim.models import Word2Vec
 
 r = praw.Reddit(client_id="27WEcCXx6eUBFWTjd0AXBg",
                 client_secret="NJUZ56HGxvyiTdsf0Xxu9L0e8Yz46w",
-                password="^Iuktxzun2652",
+                password="",
                 user_agent="USERAGENT",
                 username="Disastrous_Egg6551 ")
 
