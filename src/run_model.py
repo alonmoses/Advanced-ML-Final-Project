@@ -20,10 +20,12 @@ def main(model, dataset):
         fworkf = LRFramework
         modelf = LogisticRegression
         modelframework = fworkf(config['lr'], modelf)
+        modelframework.fit(raw_data_path=raw_data_path)
     elif model == 'bert':
         fworkf = bert_dreaddit_fw.BERTFramework if dataset == 'dreaddit' else bert_stance_fw.BERTFramework
         modelf = BertModelClassification
         modelframework = fworkf(config['bert'], modelf)
+        modelframework.fit()
     elif model == 'roberta':
         fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
         modelf = RoBertaModelClassification
@@ -37,9 +39,6 @@ def main(model, dataset):
         modelf = GPT2ModelClassification
         modelframework = fworkf(config['gpt2'], modelf)
     
-    modelframework.fit(raw_data_path=raw_data_path)
-
-
 if __name__ == '__main__':
     # parse arguments
     parser = ArgumentParser()

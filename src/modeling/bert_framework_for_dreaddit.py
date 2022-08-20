@@ -13,7 +13,7 @@ from typing import Tuple, List
 from modeling.bert_datasets import BertDatasetsForDreaddit
 from plot_results import plot_array_values_against_length
 
-MAX_EXAMPLES = None # None (for full run)
+MAX_EXAMPLES = 5 # None (for full run)
 
 def get_class_weights(examples: Iterable, label_field_name: str, classes: int) -> torch.FloatTensor:
     """
@@ -43,7 +43,7 @@ class BERTFramework:
     def init_tokenizer(self):
         self.tokenizer = BertTokenizer.from_pretrained(self.config["variant"], cache_dir="./.BERTcache",
                                                        do_lower_case=True)
-        self.model = self.modelfunc.from_pretrained("bert-base-uncased", cache_dir="./.BERTcache").to(self.device)
+        self.model = self.modelfunc.from_pretrained("bert-base-uncased", cache_dir="./.BERTcache", classes=2).to(self.device)
 
     def create_dataset_iterators(self):
         # Create DataSets
@@ -79,7 +79,7 @@ class BERTFramework:
         return train_iter, dev_iter, test_iter, weights
 
     def fit(self, lr:int=None) -> dict:
-        
+
         # Init counters and flags
         config = self.config
         
@@ -175,11 +175,11 @@ class BERTFramework:
             if config['variant'] == "bert-large-uncased" or config['variant'] == "roberta-large":
                 pred_logits = model(batch)
                 _, argmaxpreds = torch.max(F.softmax(pred_logits, -1), dim=1)
-                loss = lossfunction(pred_logits, batch.stance_label) / update_ratio
+                loss = lossfunction(pred_logits, batch.label) / update_ratio
             if config['variant'] == "gpt2":
                 pred_logits = model(batch.text)
                 _, argmaxpreds = torch.max(F.softmax(pred_logits.logits, -1), dim=1)
-                loss = lossfunction(pred_logits.logits, batch.stance_label) / update_ratio
+                loss = lossfunction(pred_logits.logits, batch.label) / update_ratio
             loss.backward()
 
             if (i + 1) % update_ratio == 0:
@@ -190,11 +190,11 @@ class BERTFramework:
             # Update accumulators
             train_loss += loss.item()
             N += 1 if not hasattr(lossfunction, "weight") \
-                else sum([lossfunction.weight[k].item() for k in batch.stance_label])
-            total_correct += self.calculate_correct(pred_logits, batch.stance_label, config=config)
-            examples_so_far += len(batch.stance_label)
+                else sum([lossfunction.weight[k].item() for k in batch.label])
+            total_correct += self.calculate_correct(pred_logits, batch.label, config=config)
+            examples_so_far += len(batch.label)
             self.total_preds += list(argmaxpreds.cpu().numpy())
-            self.total_labels += list(batch.stance_label.cpu().numpy())
+            self.total_labels += list(batch.label.cpu().numpy())
 
         # Do the last step if needed with what has been accumulated
         if not updated:
@@ -225,26 +225,25 @@ class BERTFramework:
         for _, batch in enumerate(dev_iter):
             if config['variant'] == "bert-large-uncased" or config['variant'] == "roberta-large":
                 pred_logits = model(batch)
-                loss = lossfunction(pred_logits, batch.stance_label)
+                loss = lossfunction(pred_logits, batch.label)
                 _, argmaxpreds = torch.max(F.softmax(pred_logits, -1), dim=1)
             if config['variant'] == "gpt2":
                 pred_logits = model(batch.text)
-                loss = lossfunction(pred_logits.logits, batch.stance_label)
+                loss = lossfunction(pred_logits.logits, batch.label)
                 _, argmaxpreds = torch.max(F.softmax(pred_logits.logits, -1), dim=1)
 
             # compute branch statistics
-            branch_levels = [id.split(".", 1)[-1] for id in batch.branch_id]
+            # branch_levels = [id.split(".", 1)[-1] for id in batch.branch_id]
 
             # compute correct and correct per branch depth
-            correct, correct_per_level = self.calculate_correct(pred_logits, batch.stance_label, levels=branch_levels, config=config)
+            correct = self.calculate_correct(pred_logits, batch.label, config=config)
             total_correct += correct
-            total_correct_per_level += correct_per_level
-            examples_so_far += len(batch.stance_label)
+            examples_so_far += len(batch.label)
             dev_loss += loss.item()
             N += 1 if not hasattr(lossfunction, "weight") \
-                else sum([lossfunction.weight[k].item() for k in batch.stance_label])
+                else sum([lossfunction.weight[k].item() for k in batch.label])
             total_preds += list(argmaxpreds.cpu().numpy())
-            total_labels += list(batch.stance_label.cpu().numpy())
+            total_labels += list(batch.label.cpu().numpy())
 
         loss = dev_loss / N 
         accuracy = total_correct / examples_so_far

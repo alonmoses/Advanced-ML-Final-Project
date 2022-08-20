@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 from preprocessing.add_features import add_boolean_features, add_counter_features
 
-NUM_EXAMPLES = None # None (use for full run)
+NUM_EXAMPLES = 20 # None (use for full run)
 
 
 def filter_features(df:pd.DataFrame, rho:float=0.4):

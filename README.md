@@ -19,7 +19,7 @@ There are two environments that you can run this project scripts through: local 
 
 ## Data
 ### Dreaddit challenge
-- Make the Dreadit dataset is located under `data/` directory
+- Locate the Dreadit dataset under `data/` directory
 
 ### Stance challenge
 Download data into the "data" folder inside the root directory. 
@@ -47,7 +47,8 @@ The preprocessed data (output) should be available in data_preprocessing/saved_d
 ** Notice that this script is taking a long time to run due to the large processing of the data.
 2. Run a model: `python src/run_model.py -m {model_name}`. You need to provide the script the name of the model you want to run.
 Valid options are:
-    - baseline - our baseline - BERT
+    - lr - the baseline logistic regression model as the anchor paper
+    - bert - BERT model
     - gpt2 - GPT2 model
     - roberta - Plain RoBERTa model
     - roberta_with_features - RoBERTa model with the best features combinations we found.

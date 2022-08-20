@@ -7,6 +7,7 @@ from transformers import RobertaTokenizer, GPT2Tokenizer
 from torchtext.data import Example
 # from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import torch
+from os import path
 
 from preprocessing.add_features import add_ner_feature
 
@@ -16,11 +17,11 @@ class BertDatasetsForDreaddit(tt.data.Dataset):
     Creates dataset, where each example is composed as triplet: (source post, previous post, target post)
     """
 
-    def __init__(self, path: str, fields: List[Tuple[str, tt.data.Field]], tokenizer: BertTokenizer,
+    def __init__(self, data_path: str, fields: List[Tuple[str, tt.data.Field]], tokenizer: BertTokenizer,
                  max_length: int = 512, max_examples=None, with_features=False, **kwargs):
         max_length = max_length - 3  # Count without special tokens
 
-        df = pd.read_csv(path.join('data', 'dreaddit', f'{path}.csv'), nrows=max_examples)
+        df = pd.read_csv(path.join('data', 'dreaddit', f'{data_path}.csv'), nrows=max_examples)
         # Add vec features
         df, _ = add_ner_feature(df)
 
