@@ -149,9 +149,9 @@ class BERTFramework:
                 break
             
         if config["plot_res"] == "True":
-            plot_array_values_against_length([train_losses, validation_losses, test_losses], f"Loss vs Epochs {config['variant']}")
-            plot_array_values_against_length([train_accuracies, validation_accuracies, test_accuracies], f"Accuracy vs Epochs {config['variant']}")
-            plot_array_values_against_length([train_F1s, validation_F1s, test_F1s], f"F1 score vs Epochs {config['variant']}")
+            plot_array_values_against_length([train_losses, validation_losses, test_losses], f"Loss vs Epochs - 'Stress Detection' - {config['variant']}")
+            plot_array_values_against_length([train_accuracies, validation_accuracies, test_accuracies], f"Accuracy vs Epochs - 'Stress Detection' - {config['variant']}")
+            plot_array_values_against_length([train_F1s, validation_F1s, test_F1s], f"F1 score vs Epochs - 'Stress Detection' - {config['variant']}")
             #plot_confusion_matrix(self.total_labels, self.total_preds)
 
     def train(self, model: torch.nn.Module, lossfunction: _Loss, optimizer: torch.optim.Optimizer,
