@@ -156,7 +156,6 @@ class BERTFramework:
             plot_array_values_against_length([train_accuracies, validation_accuracies, test_accuracies], f"Accuracy vs Epochs - 'Stance Detection' - {config['variant']}")
             plot_array_values_against_length([train_F1s_global, validation_F1s_global, test_F1s_global], f"Global F1 score vs Epochs - 'Stance Detection' - {config['variant']}")
             plot_array_values_against_length([train_F1s_weighted, validation_F1s_weighted, test_F1s_weighted], f"Weighted F1 score vs Epochs - 'Stance Detection' - {config['variant']}")
-            #plot_confusion_matrix(self.total_labels, self.total_preds)
 
     def train(self, model: torch.nn.Module, lossfunction: _Loss, optimizer: torch.optim.Optimizer,
               train_iter: Iterator, config: dict) -> Tuple[float, float]:

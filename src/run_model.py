@@ -30,14 +30,17 @@ def main(model, dataset):
         fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
         modelf = RoBertaModelClassification
         modelframework = fworkf(config['roberta'], modelf)
+        modelframework.fit()
     elif model == 'roberta_with_features':
         fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
         modelf = RoBertaWFeaturesModelClassification
         modelframework = fworkf(config['roberta'], modelf, with_features=True)
+        modelframework.fit()
     elif model == 'gpt2':
         fworkf = bert_dreaddit_fw.GPT2Framework if dataset == 'dreaddit' else bert_stance_fw.GPT2Framework
         modelf = GPT2ModelClassification
         modelframework = fworkf(config['gpt2'], modelf)
+        modelframework.fit()
     
 if __name__ == '__main__':
     # parse arguments
@@ -48,7 +51,7 @@ if __name__ == '__main__':
         help='Rather running the baseline or new model', 
         required=False, 
         choices=['lr', 'bert', 'roberta', 'roberta_with_features', 'gpt2'], 
-        default='lr'
+        default='roberta'
     )
     parser.add_argument(
         '-d', 

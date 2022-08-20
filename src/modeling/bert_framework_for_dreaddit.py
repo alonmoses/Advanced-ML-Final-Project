@@ -152,7 +152,6 @@ class BERTFramework:
             plot_array_values_against_length([train_losses, validation_losses, test_losses], f"Loss vs Epochs - 'Stress Detection' - {config['variant']}")
             plot_array_values_against_length([train_accuracies, validation_accuracies, test_accuracies], f"Accuracy vs Epochs - 'Stress Detection' - {config['variant']}")
             plot_array_values_against_length([train_F1s, validation_F1s, test_F1s], f"F1 score vs Epochs - 'Stress Detection' - {config['variant']}")
-            #plot_confusion_matrix(self.total_labels, self.total_preds)
 
     def train(self, model: torch.nn.Module, lossfunction: _Loss, optimizer: torch.optim.Optimizer,
               train_iter: Iterator, config: dict) -> Tuple[float, float]:
@@ -278,7 +277,7 @@ class RoBERTaFramework(BERTFramework):
 
     def init_tokenizer(self):
         self.tokenizer = RobertaTokenizer.from_pretrained('roberta-large')
-        self.model = self.modelfunc.from_pretrained('roberta-large').to(self.device)
+        self.model = self.modelfunc.from_pretrained('roberta-large', classes=2).to(self.device)
 
 class GPT2Framework(BERTFramework):
     def __init__(self, config: dict, modelfunc):
@@ -288,7 +287,7 @@ class GPT2Framework(BERTFramework):
 
     def init_tokenizer(self):
         model_config = GPT2Config.from_pretrained(pretrained_model_name_or_path='gpt2', num_labels=4)
-        self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+        self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2', classes=2)
         # default to left padding
         self.tokenizer.padding_side = "left"
         # Define PAD Token = EOS Token = 50256
