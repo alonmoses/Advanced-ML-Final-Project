@@ -80,7 +80,7 @@ class RoBertaWFeaturesModelClassification(RobertaModel):
         
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
-        self.hidden_layer = nn.Linear(config.hidden_size + 9, config.hidden_size)
+        self.hidden_layer = nn.Linear(config.hidden_size + 7, config.hidden_size)
         
         self.last_layer = nn.Linear(config.hidden_size, classes)
 
@@ -98,8 +98,8 @@ class RoBertaWFeaturesModelClassification(RobertaModel):
             batch.haspic,
             batch.hasnegation,
             batch.hasswearwords,
-            batch.src_rumour,
-            batch.thread_rumour#,
+            # batch.src_rumour,
+            # batch.thread_rumour#,
             # batch.spacy_processed_NERvec
         ]
         features = cat(tuple([f.unsqueeze(-1) for f in used_features]), dim=-1)

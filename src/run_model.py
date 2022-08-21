@@ -11,28 +11,31 @@ def main(model, dataset):
     with open(path.join('src', 'config.json'), 'r') as f:
         config = json.load(f)
 
-    if dataset == 'dreaddit':
+    if dataset == 'stress_detection':
         raw_data_path = path.join('data', 'dreaddit')
     else:
         raw_data_path = path.join('data', 'stance')
 
     if model == 'lr':
+        if dataset == 'stance_detection':
+            print("Error: logistic regression is not applied on the stance detection task")
+            return
         fworkf = LRFramework
         modelf = LogisticRegression
         modelframework = fworkf(config['lr'], modelf)
         modelframework.fit(raw_data_path=raw_data_path)
     elif model == 'bert':
-        fworkf = bert_dreaddit_fw.BERTFramework if dataset == 'dreaddit' else bert_stance_fw.BERTFramework
+        fworkf = bert_dreaddit_fw.BERTFramework if dataset == 'stress_detection' else bert_stance_fw.BERTFramework
         modelf = BertModelClassification
         modelframework = fworkf(config['bert'], modelf)
         modelframework.fit()
     elif model == 'roberta':
-        fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
+        fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'stress_detection' else bert_stance_fw.RoBERTaFramework
         modelf = RoBertaModelClassification
         modelframework = fworkf(config['roberta'], modelf)
         modelframework.fit()
     elif model == 'roberta_with_features':
-        fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'dreaddit' else bert_stance_fw.RoBERTaFramework
+        fworkf = bert_dreaddit_fw.RoBERTaFramework if dataset == 'stress_detection' else bert_stance_fw.RoBERTaFramework
         modelf = RoBertaWFeaturesModelClassification
         modelframework = fworkf(config['roberta'], modelf, with_features=True)
         modelframework.fit()
@@ -48,18 +51,18 @@ if __name__ == '__main__':
     parser.add_argument(
         '-m', 
         '--model', 
-        help='Rather running the baseline or new model', 
+        help='Choose model to execute', 
         required=False, 
         choices=['lr', 'bert', 'roberta', 'roberta_with_features', 'gpt2'], 
-        default='roberta'
+        default='lr'
     )
     parser.add_argument(
         '-d', 
         '--dataset', 
-        help='Rather running the dreaddit or stance dataset', 
+        help='Rather running the stress_detection or stance_detection dataset', 
         required=False, 
-        choices=['dreaddit', 'stance'], 
-        default='dreaddit'
+        choices=['stress_detection', 'stance_detection'], 
+        default='stress_detection'
     )
 
     args = parser.parse_args()

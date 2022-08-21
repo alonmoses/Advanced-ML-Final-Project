@@ -13,7 +13,7 @@ from typing import Tuple, List
 from modeling.bert_datasets import BertDatasetsForDreaddit
 from plot_results import plot_array_values_against_length
 
-MAX_EXAMPLES = 5 # None (for full run)
+MAX_EXAMPLES = None # None (for full run)
 
 def get_class_weights(examples: Iterable, label_field_name: str, classes: int) -> torch.FloatTensor:
     """

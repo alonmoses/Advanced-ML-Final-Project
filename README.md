@@ -45,7 +45,7 @@ There are two main scripts you have to run:
 1. data processing: `python src/data_processing_dreaddit.py`. 
 The preprocessed data (output) should be available in data_preprocessing/saved_data_RumEval2019.
 ** Notice that this script is taking a long time to run due to the large processing of the data.
-2. Run a model: `python src/run_model.py -m {model_name}`. You need to provide the script the name of the model you want to run.
+2. Run a model: `python src/run_model.py -m {model_name} -d stress_detection`. You need to provide the script the name of the model you want to run.
 Valid options are:
     - lr - the baseline logistic regression model as the anchor paper
     - bert - BERT model
@@ -62,7 +62,7 @@ There are two main scripts you have to run:
 1. data processing: `python src/data_processing_stance.py`. 
 The preprocessed data (output) should be available in data_preprocessing/saved_data_RumEval2019.
 ** Notice that this script is taking a long time to run due to the large processing of the data.
-2. Run a model: `python src/run_model.py -m {model_name}`. You need to provide the script the name of the model you want to run.
+2. Run a model: `python src/run_model.py -m {model_name} -d stance_detection`. You need to provide the script the name of the model you want to run.
 Valid options are:
     - baseline - our baseline - BERT
     - gpt2 - GPT2 model
