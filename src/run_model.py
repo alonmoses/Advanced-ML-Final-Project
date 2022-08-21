@@ -40,13 +40,12 @@ def main(model, dataset):
         modelframework = fworkf(config['roberta'], modelf, with_features=True)
         modelframework.fit()
     elif model == 'gpt2':
-        fworkf = bert_dreaddit_fw.GPT2Framework if dataset == 'dreaddit' else bert_stance_fw.GPT2Framework
+        fworkf = bert_dreaddit_fw.GPT2Framework if dataset == 'stress_detection' else bert_stance_fw.GPT2Framework
         modelf = GPT2ModelClassification
         modelframework = fworkf(config['gpt2'], modelf)
         modelframework.fit()
     
 if __name__ == '__main__':
-    # parse arguments
     parser = ArgumentParser()
     parser.add_argument(
         '-m', 
