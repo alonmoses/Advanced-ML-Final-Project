@@ -10,10 +10,9 @@ There are two environments that you can run this project scripts through: local 
 3. Run python scripts (detailed below)
 ### Google Colab
 1. Copy this entire repository into your Google Drive (including the data folder)
-2. Open the "run_project.ipynb" notebook that you can find in the root folder of this Repo.
+2. Open the `run_models/run_project` and open the `run_project_dreaddit.ipynb` or `run_project_stance.ipynb` notebooks that you can find there.
 3. Change the hard-coded Drive path to this folder (second code cell)
 4. Run cells
-** Note that for this example we changed the maximum number of epochs to be 2
 
 * The `src/config.json` file lists the hyperparameters used during training and evaluation of the model, change them to get different results.
 
@@ -71,6 +70,8 @@ For example: `python src/run_model.py -m gpt2`
         * The lr option is not available for execution via the google collab but only for option 1.
     - BUT-FIT RumorEval paper- https://drive.google.com/file/d/15UrcGrhVerWBOcDvmQMNnMGhEtHLwEG2/view?usp=sharing 
 
+For each task we chose to present the best RoBERTa model + relevant features in the final noteboks shared above.
+To review the other combinations please refer to the `run_models/<chosen combination>` directory.
 ## Results-
 - The flow prints to the terminal the loss, accuracy, and F1 score for each epoch.
 - At the end of the execution `plots/` directory will include 3 plots of the loss, accuracy, and F1 progress with respect to the epoch number. 
