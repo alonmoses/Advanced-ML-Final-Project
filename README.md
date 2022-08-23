@@ -38,41 +38,39 @@ The structure should be:
 
 ## Relevant Scripts
 - Training word2vec model - Run the "train_word2vec_on_reddit_data.py" script to train the Word2Vec model on the whole dataset of the paper.
-If you preffer you can download the model files from our shared Drive folder - __________
+If you preffer you can download the model files from our shared Drive folder - https://drive.google.com/drive/folders/1hFGjBMyxqosI4ZYEGYvtZZZvK_QDZoF7
 
 ### Dreaddit challenge
-There are two main scripts you have to run:
-1. data processing: `python src/data_processing_dreaddit.py`. 
+Before executing the models, you must run the data processing flow:
+    - data processing: `python src/data_processing_dreaddit.py`. 
+The preprocessed data (output) should be available in data/dreaddin.
+** Notice that this script is taking a long time to run due to the large processing of the data.
+
+### Stance challenge
+Before executing the models, you must run the data processing flow:
+    - data processing: `python src/data_processing_stance.py`. 
 The preprocessed data (output) should be available in data_preprocessing/saved_data_RumEval2019.
 ** Notice that this script is taking a long time to run due to the large processing of the data.
-2. Run a model: `python src/run_model.py -m {model_name} -d stress_detection`. You need to provide the script the name of the model you want to run.
+
+## Execution options- 
+1. Run a model: `python src/run_model.py -m {model_name} -d stance_detection`. You need to provide the script the name of the model you want to run.
+
 Valid options are:
     - lr - the baseline logistic regression model as the anchor paper
+        * Implemented only for the dreaddit paper as part of the anchor paper submission.
     - bert - BERT model
     - gpt2 - GPT2 model
     - roberta - Plain RoBERTa model
     - roberta_with_features - RoBERTa model with the best features combinations we found.
 
-    For example: `python src/run_model.py -m gpt2`
-
+For example: `python src/run_model.py -m gpt2`
 ** Notice - you need to run everything from root directory (so the working directory is root directory)
 
-### Stance challenge
-There are two main scripts you have to run:
-1. data processing: `python src/data_processing_stance.py`. 
-The preprocessed data (output) should be available in data_preprocessing/saved_data_RumEval2019.
-** Notice that this script is taking a long time to run due to the large processing of the data.
-2. Run a model: `python src/run_model.py -m {model_name} -d stance_detection`. You need to provide the script the name of the model you want to run.
-Valid options are:
-    - baseline - our baseline - BERT
-    - gpt2 - GPT2 model
-    - roberta - Plain RoBERTa model
-    - roberta_with_features - RoBERTa model with the best features combinations we found.
-
-    For example: `python src/run_model.py -m gpt2`
-
-** Notice - you need to run everything from root directory (so the working directory is root directory)
+2. Run the models from the google collab notebooks-
+    - Dreaddit paper- https://drive.google.com/drive/folders/1GGn-zE_XduMgbMSxZyFwnoixMwbutGP8?usp=sharing
+        * The lr option is not available for execution via the google collab but only for option 1.
+    - BUT-FIT RumorEval paper- https://drive.google.com/file/d/15UrcGrhVerWBOcDvmQMNnMGhEtHLwEG2/view?usp=sharing 
 
 ## Results-
 - The flow prints to the terminal the loss, accuracy, and F1 score for each epoch.
-- At the end of the execution `plots/` directory will include 3 plots of the loss, accuracy, and F1 progress with respect to the epoch number.
+- At the end of the execution `plots/` directory will include 3 plots of the loss, accuracy, and F1 progress with respect to the epoch number. 

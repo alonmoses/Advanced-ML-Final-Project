@@ -36,9 +36,9 @@ class LRFramework:
             test_accuracies.append(test_accuracy) 
             test_F1s.append(test_F1)
 
-        plot_array_values_against_length([train_losses, test_losses], "Loss vs Epochs - 'Stance Detection' - Logistic Regression")
-        plot_array_values_against_length([train_accuracies, test_accuracies], "Accuracy vs Epochs - 'Stance Detection' - Logistic Regression")
-        plot_array_values_against_length([train_F1s, test_F1s], "F1 Score vs Epochs - 'Stance Detection' - Logistic Regression")
+        plot_array_values_against_length([train_losses, test_losses], "Loss vs Epochs - 'Stress Detection' - Logistic Regression")
+        plot_array_values_against_length([train_accuracies, test_accuracies], "Accuracy vs Epochs - 'Stress Detection' - Logistic Regression")
+        plot_array_values_against_length([train_F1s, test_F1s], "F1 Score vs Epochs - 'Stress Detection' - Logistic Regression")
 
     def train(self, dl):
         self.model.train()
